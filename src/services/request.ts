@@ -3,13 +3,14 @@ import { createAlova } from 'alova';
 import GlobalFetch from 'alova/GlobalFetch';
 import { Alert } from 'react-native';
 import storage from '../utils/storage';
+import StorageKey from '../constants/StorageKey';
 
 function getToken() {
   let tempToken = '';
   return {
     get() {
       if (tempToken) return tempToken;
-      const token = storage.getString('TOKEN');
+      const token = storage.getString(StorageKey.USER_TOKEN);
       if (token) {
         tempToken = token;
       }
@@ -35,7 +36,7 @@ export const alovaIns = createAlova({
 
   // 设置全局的请求拦截器，与axios相似
   beforeRequest({ config }) {
-    console.log('请求已发送');
+    console.log('请求已发送', config);
 
     // 假设我们需要添加token到请求头
     config.headers.Authorization = `Bearer ${computedToken.get()}`;

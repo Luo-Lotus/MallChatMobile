@@ -1,30 +1,22 @@
 import { useEffect } from 'react';
 import ChatWebsocket, { ChatWebsocketEvent } from '../utils/ChatWebsocket';
 import { useChatStore } from '../stores/useChatStore';
-import { WsResponseMessageType } from '../services/wsType';
 import useUsersStore from '../stores/useUsersStore';
+import useUserStore from '../stores/useUserStore';
 
 const WEBSOCKET_URL = 'wss://api.mallchat.cn/websocket';
 
-const chatWebSocket = new ChatWebsocket(WEBSOCKET_URL);
+export const chatWebSocket = new ChatWebsocket(WEBSOCKET_URL);
 
 const useWebsocket = () => {
-  const { addNewMessage } = useChatStore();
-  const { cachedUsers, init } = useUsersStore();
+  const { initChat } = useChatStore();
+  const { initUsers } = useUsersStore();
+  const { initUser } = useUserStore();
 
   useEffect(() => {
-    console.log(cachedUsers.map((_) => _.name));
-  }, [cachedUsers]);
-
-  useEffect(() => {
-    init();
-    chatWebSocket.addListener(
-      ChatWebsocketEvent[WsResponseMessageType.ReceiveMessage],
-      addNewMessage,
-    );
-    chatWebSocket.addListener(ChatWebsocketEvent[WsResponseMessageType.WSMsgMarkItem], (data) => {
-      console.log('收到发送的消息', data);
-    });
+    initUsers();
+    initUser();
+    initChat();
 
     chatWebSocket.addListener(ChatWebsocketEvent.OPEN, () => {
       console.log('连接成功');

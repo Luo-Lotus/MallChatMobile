@@ -7,7 +7,7 @@ interface IUserStore {
   users: UserItem[];
   cachedUsers: CacheUserItem[];
   pageCursor?: string;
-  init: () => void;
+  initUsers: () => void;
   fetchUsersByUserIds: (ids: number[]) => Promise<Record<number, CacheUserItem>>;
   getKeyByIdUser: () => Record<number, CacheUserItem>;
   fetchUsers: () => void;
@@ -17,7 +17,7 @@ const useUsersStore = create<IUserStore>((set, get) => ({
   users: [],
   cachedUsers: [],
   pageCursor: undefined,
-  init: () => {
+  initUsers: () => {
     get().fetchUsers();
   },
   // 获取当前在线玩家列表

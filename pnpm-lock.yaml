@@ -35,12 +35,27 @@ dependencies:
   react-native-background-timer:
     specifier: ^2.4.1
     version: 2.4.1(react-native@0.72.1)
+  react-native-click-outside:
+    specifier: ^0.1.0
+    version: 0.1.0(react-native@0.72.1)(react@18.2.0)
+  react-native-extended-stylesheet:
+    specifier: ^0.12.0
+    version: 0.12.0
+  react-native-gesture-handler:
+    specifier: ^2.12.0
+    version: 2.12.0(react-native@0.72.1)(react@18.2.0)
+  react-native-markdown-view:
+    specifier: ^1.1.4
+    version: 1.1.4(react-native@0.72.1)(react@18.2.0)
   react-native-mmkv:
     specifier: ^2.10.1
     version: 2.10.1(react-native@0.72.1)(react@18.2.0)
   react-native-push-notification:
     specifier: ^8.1.1
     version: 8.1.1(@react-native-community/push-notification-ios@1.11.0)(react-native@0.72.1)
+  react-native-reanimated:
+    specifier: ^3.3.0
+    version: 3.3.0(@babel/core@7.20.2)(@babel/plugin-proposal-nullish-coalescing-operator@7.18.6)(@babel/plugin-proposal-optional-chaining@7.21.0)(@babel/plugin-transform-arrow-functions@7.22.5)(@babel/plugin-transform-shorthand-properties@7.22.5)(@babel/plugin-transform-template-literals@7.22.5)(react-native@0.72.1)(react@18.2.0)
   react-native-safe-area-context:
     specifier: ^4.6.4
     version: 4.6.4(react-native@0.72.1)(react@18.2.0)
@@ -1018,6 +1033,16 @@ packages:
       '@babel/core': 7.20.2
       '@babel/helper-plugin-utils': 7.22.5
 
+  /@babel/plugin-transform-object-assign@7.22.5(@babel/core@7.20.2):
+    resolution: {integrity: sha512-iDhx9ARkXq4vhZ2CYOSnQXkmxkDgosLi3J8Z17mKz7LyzthtkdVchLD7WZ3aXeCuvJDOW3+1I5TpJmwIbF9MKQ==}
+    engines: {node: '>=6.9.0'}
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+    dependencies:
+      '@babel/core': 7.20.2
+      '@babel/helper-plugin-utils': 7.22.5
+    dev: false
+
   /@babel/plugin-transform-object-super@7.22.5(@babel/core@7.20.2):
     resolution: {integrity: sha512-klXqyaT9trSjIUrcsYIfETAzmOEZL3cBYqOYLJxBHfMFFggmXOv+NYSX/Jbs9mzMVESw/WycLFPRx8ba/b2Ipw==}
     engines: {node: '>=6.9.0'}
@@ -1394,6 +1419,13 @@ packages:
   /@bcoe/v8-coverage@0.2.3:
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
     dev: true
+
+  /@egjs/hammerjs@2.0.17:
+    resolution: {integrity: sha512-XQsZgjm2EcVUiZQf11UBJQfmZeEmOW8DpI1gsFeln6w0ae0ii4dMQEQ0kjl6DspdWX1aGY1/loyXnP0JS06e/A==}
+    engines: {node: '>=0.8.0'}
+    dependencies:
+      '@types/hammerjs': 2.0.41
+    dev: false
 
   /@eslint-community/eslint-utils@4.4.0(eslint@8.19.0):
     resolution: {integrity: sha512-1/sA4dwrzBAyeUoQ6oxahHKmrZvsnLCg4RfxW3ZFGGmQkSNQPFNLV9CUEFQP1x9EYXHTo5p6xdhZM1Ne9p/AfA==}
@@ -2179,6 +2211,10 @@ packages:
     dependencies:
       '@types/node': 20.3.3
     dev: true
+
+  /@types/hammerjs@2.0.41:
+    resolution: {integrity: sha512-ewXv/ceBaJprikMcxCmWU1FKyMAQ2X7a9Gtmzw8fcg2kIePI1crERDM818W+XYrxqdBBOdlf2rm137bU+BltCA==}
+    dev: false
 
   /@types/istanbul-lib-coverage@2.0.4:
     resolution: {integrity: sha512-z/QT1XN4K4KYuslS23k62yDIDLwLFkzxOuMplDtObz0+y7VqJCaO2o+SPwHCvLFZh7xazvvoor2tA/hPz9ee7g==}
@@ -3080,7 +3116,6 @@ packages:
 
   /convert-source-map@2.0.0:
     resolution: {integrity: sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19TFykTz2xWmMeq6bk2NU3XXvfJ+Q61m0xktWwt+1HSYf3JZsTms3aRJg==}
-    dev: true
 
   /core-js-compat@3.31.0:
     resolution: {integrity: sha512-hM7YCu1cU6Opx7MXNu0NuumM0ezNeAeRKadixyiQELWY3vT3De9S4J5ZBMraWV2vZnrE1Cirl0GtFtDtMUXzPw==}
@@ -3106,6 +3141,10 @@ packages:
       path-key: 3.1.1
       shebang-command: 2.0.0
       which: 2.0.2
+
+  /css-mediaquery@0.1.2:
+    resolution: {integrity: sha512-COtn4EROW5dBGlE/4PiKnh6rZpAPxDeFLaEEwt4i10jpDMFt2EhQGS79QmmrO+iKCHv0PU/HrOWEhijFd1x99Q==}
+    dev: false
 
   /csstype@3.1.2:
     resolution: {integrity: sha512-I7K1Uu0MBPzaFKg4nI5Q7Vs2t+3gWWW648spaF+Rg7pI9ds18Ugn+lvg4SHczUdKlHI5LWBXyqfS8+DufyBsgQ==}
@@ -3983,6 +4022,12 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       source-map: 0.7.4
+
+  /hoist-non-react-statics@3.3.2:
+    resolution: {integrity: sha512-/gGivxi8JPKWNm/W0jSmzcMPpfpPLc3dY/6GxhX2hQ9iGj3aDfklV4ET7NjKpSinLpJ5vafa9iiGIEZg10SfBw==}
+    dependencies:
+      react-is: 16.13.1
+    dev: false
 
   /html-escaper@2.0.2:
     resolution: {integrity: sha512-H2iMtd0I4Mt5eYiapRdIDjp+XzelXQ0tFE4JS7YFwFevXXMmOp9myNrUvCg0D6ws8iqkRPBfKHgbwig1SmlLfg==}
@@ -5664,6 +5709,10 @@ packages:
     engines: {node: '>= 0.4'}
     dev: true
 
+  /object-resolve-path@1.1.1:
+    resolution: {integrity: sha512-SnDr0lPbDWDB8s6qbWAcDs2dZ4G7niCJpxihaf5g6wluZQd3yHtN4ApwoKz7pLdMnRlGrdXslO57MulC+h3Neg==}
+    dev: false
+
   /object.assign@4.1.4:
     resolution: {integrity: sha512-1mxKf0e58bvyjSCtKYY4sRe9itRk3PJpquJOjeIkz885CczcI4IvJJDLPS72oowuSh+pBxUFROpX+TU++hxhZQ==}
     engines: {node: '>= 0.4'}
@@ -6009,6 +6058,50 @@ packages:
       react-native: 0.72.1(@babel/core@7.20.2)(@babel/preset-env@7.20.2)(react@18.2.0)
     dev: false
 
+  /react-native-click-outside@0.1.0(react-native@0.72.1)(react@18.2.0):
+    resolution: {integrity: sha512-voDTveeUwN+S7fAF8R6X6QHSteZE122ip54t20+L38jSEy4QcrnGEZS6zwATI7ZQg96YLSIx9uJL7IcizVY+sQ==}
+    engines: {node: '>= 16.0.0'}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
+    dependencies:
+      react: 18.2.0
+      react-native: 0.72.1(@babel/core@7.20.2)(@babel/preset-env@7.20.2)(react@18.2.0)
+    dev: false
+
+  /react-native-extended-stylesheet@0.12.0:
+    resolution: {integrity: sha512-y4MEI+a9F8qtAKEjxKbwqotJg1FqKfl6vaiF25ULZ/VGkWI4GNTnsFunU9x6B3XJ6ly1E8O9fybO63u6UazL/A==}
+    dependencies:
+      css-mediaquery: 0.1.2
+      object-resolve-path: 1.1.1
+    dev: false
+
+  /react-native-gesture-handler@2.12.0(react-native@0.72.1)(react@18.2.0):
+    resolution: {integrity: sha512-rr+XwVzXAVpY8co25ukvyI38fKCxTQjz7WajeZktl8qUPdh1twnSExgpT47DqDi4n+m+OiJPAnHfZOkqqAQMOg==}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
+    dependencies:
+      '@egjs/hammerjs': 2.0.17
+      hoist-non-react-statics: 3.3.2
+      invariant: 2.2.4
+      lodash: 4.17.21
+      prop-types: 15.8.1
+      react: 18.2.0
+      react-native: 0.72.1(@babel/core@7.20.2)(@babel/preset-env@7.20.2)(react@18.2.0)
+    dev: false
+
+  /react-native-markdown-view@1.1.4(react-native@0.72.1)(react@18.2.0):
+    resolution: {integrity: sha512-dW4I+pqTGXBt4JRnTuo40N1u/m7P72wxqD+qwQoNzRqKNo/wP2N70Gokn3/5+u8orXK/kUbnxxLEQauF7+4tFg==}
+    dependencies:
+      prop-types: 15.8.1
+      react-native-tabular-grid-markdown-view: 0.1.0(react-native@0.72.1)(react@18.2.0)
+      simple-markdown: 0.3.3
+    transitivePeerDependencies:
+      - react
+      - react-native
+    dev: false
+
   /react-native-mmkv@2.10.1(react-native@0.72.1)(react@18.2.0):
     resolution: {integrity: sha512-MCrYytUJ3JhSVg7LwVXCj7ExbMHe48FoQdDA1xo1q/M4c1/QyI3M9L9d2dyJUhYPnsSO0+5c2mJICm7v39XA0w==}
     peerDependencies:
@@ -6027,6 +6120,34 @@ packages:
     dependencies:
       '@react-native-community/push-notification-ios': 1.11.0(react-native@0.72.1)(react@18.2.0)
       react-native: 0.72.1(@babel/core@7.20.2)(@babel/preset-env@7.20.2)(react@18.2.0)
+    dev: false
+
+  /react-native-reanimated@3.3.0(@babel/core@7.20.2)(@babel/plugin-proposal-nullish-coalescing-operator@7.18.6)(@babel/plugin-proposal-optional-chaining@7.21.0)(@babel/plugin-transform-arrow-functions@7.22.5)(@babel/plugin-transform-shorthand-properties@7.22.5)(@babel/plugin-transform-template-literals@7.22.5)(react-native@0.72.1)(react@18.2.0):
+    resolution: {integrity: sha512-LzfpPZ1qXBGy5BcUHqw3pBC0qSd22qXS3t8hWSbozXNrBkzMhhOrcILE/nEg/PHpNNp1xvGOW8NwpAMF006roQ==}
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+      '@babel/plugin-proposal-nullish-coalescing-operator': ^7.0.0-0
+      '@babel/plugin-proposal-optional-chaining': ^7.0.0-0
+      '@babel/plugin-transform-arrow-functions': ^7.0.0-0
+      '@babel/plugin-transform-shorthand-properties': ^7.0.0-0
+      '@babel/plugin-transform-template-literals': ^7.0.0-0
+      react: '*'
+      react-native: '*'
+    dependencies:
+      '@babel/core': 7.20.2
+      '@babel/plugin-proposal-nullish-coalescing-operator': 7.18.6(@babel/core@7.20.2)
+      '@babel/plugin-proposal-optional-chaining': 7.21.0(@babel/core@7.20.2)
+      '@babel/plugin-transform-arrow-functions': 7.22.5(@babel/core@7.20.2)
+      '@babel/plugin-transform-object-assign': 7.22.5(@babel/core@7.20.2)
+      '@babel/plugin-transform-shorthand-properties': 7.22.5(@babel/core@7.20.2)
+      '@babel/plugin-transform-template-literals': 7.22.5(@babel/core@7.20.2)
+      '@babel/preset-typescript': 7.22.5(@babel/core@7.20.2)
+      convert-source-map: 2.0.0
+      invariant: 2.2.4
+      react: 18.2.0
+      react-native: 0.72.1(@babel/core@7.20.2)(@babel/preset-env@7.20.2)(react@18.2.0)
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /react-native-safe-area-context@4.6.4(react-native@0.72.1)(react@18.2.0):
@@ -6049,6 +6170,17 @@ packages:
       react-freeze: 1.0.3(react@18.2.0)
       react-native: 0.72.1(@babel/core@7.20.2)(@babel/preset-env@7.20.2)(react@18.2.0)
       warn-once: 0.1.1
+    dev: false
+
+  /react-native-tabular-grid-markdown-view@0.1.0(react-native@0.72.1)(react@18.2.0):
+    resolution: {integrity: sha512-K1WzwmwR53sOUpekEgBv4fN8wDVqsniJAda+FUp6hVXhRQwzj2CZDIuY1skFo/IkVlF/iyrKa1TeTHEba0aHFA==}
+    peerDependencies:
+      react: '>=15.4.2'
+      react-native: '>=0.41.0'
+    dependencies:
+      prop-types: 15.8.1
+      react: 18.2.0
+      react-native: 0.72.1(@babel/core@7.20.2)(@babel/preset-env@7.20.2)(react@18.2.0)
     dev: false
 
   /react-native@0.72.1(@babel/core@7.20.2)(@babel/preset-env@7.20.2)(react@18.2.0):
@@ -6403,6 +6535,11 @@ packages:
 
   /signal-exit@3.0.7:
     resolution: {integrity: sha512-wnD2ZE+l+SPC/uoS0vXeE9L1+0wuaMqKlfz9AMUo38JsyLSBWSFcHR1Rri62LZc12vLr1gb3jl7iwQhgwpAbGQ==}
+
+  /simple-markdown@0.3.3:
+    resolution: {integrity: sha512-2qx5eXuRP/2pH+I/EQYVzZ/XgGHg2IAHEfIZkrPbtfiOkSkd4Q1mswE7LG77I+TDz2eb2Vx2K/v/Ul0llFhplg==}
+    deprecated: XSS vulnerability in untrusted link targets fixed in API-compatible v0.4.4
+    dev: false
 
   /simple-swizzle@0.2.2:
     resolution: {integrity: sha512-JA//kQgZtbuY83m+xT+tXJkmJncGMTFT+C+g2h2R9uxkYIrE2yy9sgmcLhCnw57/WSD+Eh3J97FPEDFnbXnDUg==}

@@ -3,15 +3,20 @@ import { MessageType } from '../services/types';
 import apis from '../services/apis';
 import useUsersStore from './useUsersStore';
 import notificationManager from '../utils/NotificationManager';
+import { chatWebSocket } from '../hooks/useWebsocket';
+import { ChatWebsocketEvent } from '../utils/ChatWebsocket';
+import { WsResponseMessageType } from '../services/wsType';
+import { MsgEnum } from '../enums';
 
 export interface IChatStoreState {
   messages: MessageType[];
   pageCursor?: string;
   onReceiveMessage?: (message: MessageType) => void;
   setOnReceiveMessage: (cb: IChatStoreState['onReceiveMessage']) => void;
-  init: () => Promise<void>;
+  initChat: () => Promise<void>;
   fetchMessages: () => Promise<void>;
   addNewMessage: (event: MessageType) => void;
+  sendTextMessage: (message: string) => Promise<any>;
   combineMessageWithUser: (messages: MessageType[]) => Promise<MessageType[]>;
 }
 
@@ -24,8 +29,12 @@ export const useChatStore = create<IChatStoreState>((set, get) => ({
       onReceiveMessage: cb,
     });
   },
-  init: async () => {
+  initChat: async () => {
     await get().fetchMessages();
+    chatWebSocket.addListener(
+      ChatWebsocketEvent[WsResponseMessageType.ReceiveMessage],
+      get().addNewMessage,
+    );
   },
   fetchMessages: async () => {
     const res = await apis
@@ -51,6 +60,23 @@ export const useChatStore = create<IChatStoreState>((set, get) => ({
         id: 1,
       });
     }
+  },
+  sendTextMessage: (text) => {
+    return apis
+      .sendMsg({
+        roomId: 1,
+        msgType: MsgEnum.TEXT,
+        body: {
+          content: text,
+        },
+      })
+      .send()
+      .then((message) => {
+        get().addNewMessage(message);
+      })
+      .catch((res) => {
+        console.log(res);
+      });
   },
   combineMessageWithUser: async (messages) => {
     const userIds = messages.map((_) => _.fromUser.uid);

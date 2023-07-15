@@ -1,15 +1,18 @@
 import React, { FC, useEffect, useMemo } from 'react';
 import { Image, StyleSheet, View, Text } from 'react-native';
-import RTNCalculator from 'rtn-calculator/js/NativeCalculator';
-
+import PopMenu from './Popmenu';
 type IProps = {
   username: string;
   message: string;
   address: string;
   avatarUrl: string;
+  isSelf?: boolean;
 };
+// import { MarkdownView } from 'react-native-markdown-view';
 
-const MessageCard: FC<IProps> = ({ username, message, address, avatarUrl }) => {
+const defaultAvatar = require('../../assets/avatar.png');
+
+const MessageCard: FC<IProps> = ({ username, message, address, avatarUrl, isSelf = false }) => {
   useEffect(() => {
     // RTNCalculator?.add(Math.PI, 0.1).then((res) => {
     //   console.log('js计算结果', Math.PI + 0.1);
@@ -17,11 +20,12 @@ const MessageCard: FC<IProps> = ({ username, message, address, avatarUrl }) => {
     //   console.log('java计算结果', res);
     // });
   }, []);
+
   const styles = useMemo(
     () =>
       StyleSheet.create({
         container: {
-          flexDirection: 'row',
+          flexDirection: isSelf ? 'row-reverse' : 'row',
           alignItems: 'flex-start',
           margin: 10,
         },
@@ -30,8 +34,7 @@ const MessageCard: FC<IProps> = ({ username, message, address, avatarUrl }) => {
           height: 40,
           width: 40,
           borderRadius: 40,
-          marginRight: 10,
-          marginLeft: 5,
+          [isSelf ? 'marginLeft' : 'marginRight']: 10,
           marginVertical: 5,
         },
         contentWrapper: {
@@ -41,15 +44,16 @@ const MessageCard: FC<IProps> = ({ username, message, address, avatarUrl }) => {
         usernameText: {
           fontSize: 12,
           color: '#999',
+          textAlign: isSelf ? 'right' : 'left',
         },
-        messagePop: {
-          alignSelf: 'flex-start',
-          backgroundColor: '#383C4B',
-          padding: 10,
-          paddingHorizontal: 15,
-          borderTopLeftRadius: 5,
+        messageBubble: {
+          backgroundColor: isSelf ? '#1D90F5' : '#383C4B',
+          [isSelf ? 'borderTopRightRadius' : 'borderTopLeftRadius']: 5,
           borderRadius: 20,
+          padding: 10,
+          paddingHorizontal: 20,
           marginTop: 5,
+          overflow: 'hidden',
         },
         messageText: { color: 'white', fontSize: 15 },
       }),
@@ -60,15 +64,22 @@ const MessageCard: FC<IProps> = ({ username, message, address, avatarUrl }) => {
     <View style={styles.container}>
       <View style={styles.avatarWrapper}>
         {/** @ts-ignore */}
-        <Image style={styles.avatarImage} src={avatarUrl} />
+        <Image style={styles.avatarImage} src={avatarUrl} defaultSource={defaultAvatar} />
       </View>
       <View style={styles.contentWrapper}>
         <View style={styles.username}>
           <Text style={styles.usernameText}>{`${username} (${address || '未知'})`}</Text>
         </View>
-        <View style={styles.messagePop}>
+        <PopMenu
+          menus={[{ label: '复制' }, { label: '粘贴' }]}
+          style={{ alignSelf: isSelf ? 'flex-end' : 'flex-start' }}
+          pressableProps={{
+            unstable_pressDelay: 100,
+            style: styles.messageBubble,
+          }}
+        >
           <Text style={styles.messageText}>{message}</Text>
-        </View>
+        </PopMenu>
       </View>
     </View>
   );

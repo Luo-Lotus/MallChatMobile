@@ -6,21 +6,43 @@
  */
 
 import React, { useEffect, useRef, useState } from 'react';
-import { NativeScrollEvent, RefreshControl, ScrollView } from 'react-native';
+import {
+  FlatList,
+  KeyboardAvoidingView,
+  ListRenderItemInfo,
+  NativeScrollEvent,
+  View,
+} from 'react-native';
 
 import MessageCard from '../../components/MessageCard';
 import { useChatStore } from '../../stores/useChatStore';
+import { MessageType } from '../../services/types';
+import MessageInput from '../../components/MessageInput';
+import useKeyboard from '../../hooks/useKeyboard';
+import useUserStore from '../../stores/useUserStore';
 
 function Chat(): JSX.Element {
   const [refreshing, setRefreshing] = useState(false);
-  const { init, fetchMessages, messages, setOnReceiveMessage } = useChatStore();
-  const scrollViewRef = useRef<ScrollView>(null);
+  const { initChat, fetchMessages, messages, setOnReceiveMessage, sendTextMessage } =
+    useChatStore();
+  const { user } = useUserStore();
+  const scrollViewRef = useRef<FlatList>(null);
   const currentContent = useRef<NativeScrollEvent>();
 
-  console.log('已刷新');
+  const { keyboardHeight, Keyboard } = useKeyboard();
 
   useEffect(() => {
-    init().then(() => scrollTo('init'));
+    if (keyboardHeight) {
+      scrollViewRef.current?.scrollToEnd();
+    }
+  }, [keyboardHeight]);
+
+  useEffect(() => {
+    setRefreshing(true);
+    initChat().then(() => {
+      scrollTo('init');
+      setRefreshing(false);
+    });
     setOnReceiveMessage(() => {
       scrollTo('new');
     });
@@ -30,22 +52,25 @@ function Chat(): JSX.Element {
     setRefreshing(true);
     await fetchMessages();
     scrollTo('history');
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 500);
+    setRefreshing(false);
   };
 
-  const scrollTo = (action: 'history' | 'new' | 'init') => {
+  const scrollTo = (action: 'history' | 'new' | 'init', changedNumber = 17) => {
     console.log(action);
 
+    // const currentOffsetY = currentContent.current?.contentOffset.y;
     setTimeout(() => {
-      const currentOffsetY = currentContent.current?.contentOffset.y;
       switch (action) {
         case 'history':
-          currentOffsetY && scrollViewRef.current?.scrollTo({ y: currentOffsetY - 300 });
+          scrollViewRef.current?.scrollToIndex({
+            animated: true,
+            index: 17,
+          });
           break;
         case 'init':
-          scrollViewRef.current?.scrollToEnd({ animated: false });
+          setTimeout(() => {
+            scrollViewRef.current?.scrollToEnd({ animated: false });
+          }, 0);
           break;
         case 'new':
           if (currentContent.current) {
@@ -55,32 +80,41 @@ function Chat(): JSX.Element {
             }
           }
       }
-    }, 500);
+    }, 0);
   };
+
+  const renderItem = ({ item: message }: ListRenderItemInfo<MessageType>) => (
+    <MessageCard
+      key={message.message.id}
+      username={message.fromUser.username}
+      address={message.fromUser.locPlace}
+      avatarUrl={message.fromUser.avatar}
+      message={message.message.body.content}
+      isSelf={user?.uid === message.fromUser.uid}
+    />
+  );
 
   return (
     <>
-      <ScrollView
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
-        ref={scrollViewRef}
+      <FlatList<MessageType>
         style={{ backgroundColor: '#323644' }}
+        data={messages}
+        renderItem={renderItem}
+        onRefresh={handleRefresh}
+        refreshing={refreshing}
         maintainVisibleContentPosition={{
           minIndexForVisible: 0,
         }}
+        ListFooterComponent={<View />}
+        ListFooterComponentStyle={{ height: keyboardHeight || 80 }}
+        initialNumToRender={20}
+        keyExtractor={(item) => String(item.message.id)}
         onScroll={(event) => {
           currentContent.current = event.nativeEvent;
         }}
-      >
-        {messages.map((item) => (
-          <MessageCard
-            key={item.message.id}
-            username={item.fromUser.username}
-            address={item.fromUser.locPlace}
-            avatarUrl={item.fromUser.avatar}
-            message={item.message.body.content}
-          />
-        ))}
-      </ScrollView>
+        ref={scrollViewRef}
+      />
+      <MessageInput onSendText={sendTextMessage} />
     </>
   );
 }
