@@ -1,18 +1,36 @@
 import React, { FC, useEffect, useMemo } from 'react';
 import { Image, StyleSheet, View, Text } from 'react-native';
-import PopMenu from './Popmenu';
+import PopMenu from '../Popmenu';
+import { MsgEnum } from '../../enums';
+import TextMsg from './components/TextMsg';
+import Recall from './components/Recall';
+import ImageMsg from './components/ImageMsg';
+import File from './components/File';
+import Voice from './components/Voice';
+import Video from './components/Video';
+import { EmojiBody, ImageBody, MsgType, TextBody } from '../../services/types';
+import Emoji from './components/Emoji';
+
 type IProps = {
   username: string;
-  message: string;
+  messageBody: MsgType['body'];
   address: string;
   avatarUrl: string;
+  type: MsgEnum;
   isSelf?: boolean;
 };
 // import { MarkdownView } from 'react-native-markdown-view';
 
-const defaultAvatar = require('../../assets/avatar.png');
+const defaultAvatar = require('../../../assets/avatar.png');
 
-const MessageCard: FC<IProps> = ({ username, message, address, avatarUrl, isSelf = false }) => {
+const ChatCard: FC<IProps> = ({
+  username,
+  messageBody,
+  address,
+  avatarUrl,
+  isSelf = false,
+  type,
+}) => {
   useEffect(() => {
     // RTNCalculator?.add(Math.PI, 0.1).then((res) => {
     //   console.log('js计算结果', Math.PI + 0.1);
@@ -52,13 +70,30 @@ const MessageCard: FC<IProps> = ({ username, message, address, avatarUrl, isSelf
           borderRadius: 20,
           padding: 10,
           paddingHorizontal: 20,
-          marginTop: 5,
           overflow: 'hidden',
         },
         messageText: { color: 'white', fontSize: 15 },
       }),
     [],
   );
+
+  const renderMessageBody = () =>
+    ({
+      [MsgEnum.TEXT]: <TextMsg isSelf={isSelf} text={(messageBody as TextBody).content} />,
+      [MsgEnum.RECALL]: null,
+      [MsgEnum.IMAGE]: <ImageMsg imageBody={messageBody as ImageBody} />,
+      [MsgEnum.FILE]: <File />,
+      [MsgEnum.VOICE]: <Voice />,
+      [MsgEnum.VIDEO]: <Video />,
+      [MsgEnum.EMOJI]: <Emoji url={(messageBody as EmojiBody).url} />,
+    }[type]);
+
+  const shouldRenderBubble = () => [MsgEnum.TEXT].includes(type);
+  const shouldRenderChildrenPressable = () => [MsgEnum.IMAGE].includes(type);
+
+  if (type === MsgEnum.RECALL) {
+    return <Recall text={messageBody as unknown as string} />;
+  }
 
   return (
     <View style={styles.container}>
@@ -72,17 +107,19 @@ const MessageCard: FC<IProps> = ({ username, message, address, avatarUrl, isSelf
         </View>
         <PopMenu
           menus={[{ label: '复制' }, { label: '粘贴' }]}
-          style={{ alignSelf: isSelf ? 'flex-end' : 'flex-start' }}
+          style={{ alignSelf: isSelf ? 'flex-end' : 'flex-start', marginTop: 5 }}
           pressableProps={{
             unstable_pressDelay: 100,
-            style: styles.messageBubble,
+            style: shouldRenderBubble() && styles.messageBubble,
+            isRipple: shouldRenderBubble(),
           }}
+          isChildrenPressable={shouldRenderChildrenPressable()}
         >
-          <Text style={styles.messageText}>{message}</Text>
+          {renderMessageBody()}
         </PopMenu>
       </View>
     </View>
   );
 };
 
-export default MessageCard;
+export default ChatCard;

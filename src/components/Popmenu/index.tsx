@@ -7,31 +7,11 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import {
-  GestureResponderEvent,
-  Pressable,
-  PressableProps,
-  StyleProp,
-  StyleSheet,
-  Text,
-  View,
-  ViewStyle,
-} from 'react-native';
+import { StyleProp, StyleSheet, Text, View, ViewStyle } from 'react-native';
 import { useClickOutside } from 'react-native-click-outside';
-import EStyleSheet from 'react-native-extended-stylesheet';
-import Animated, {
-  FadeInDown,
-  FadeOutUp,
-  enableLayoutAnimations,
-  interpolate,
-  runOnJS,
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-  withTiming,
-} from 'react-native-reanimated';
+import Animated, { enableLayoutAnimations } from 'react-native-reanimated';
 import useFadeLayoutAnimation from '../../hooks/animations/useFadeLayoutAnimation';
-import Button from '../Button';
+import Button, { IButtonProps } from '../Button';
 
 export type PopMenuItem = {
   label: string;
@@ -42,10 +22,12 @@ export type PopMenuItem = {
 enableLayoutAnimations(true);
 
 type IProps = PropsWithChildren<{
-  pressableProps?: PressableProps;
+  pressableProps?: IButtonProps;
   menus?: PopMenuItem[];
   style?: StyleProp<ViewStyle>;
   direction?: 'horizontal' | 'vertical';
+  /** 如果为true，子组件需要为Pressable*/
+  isChildrenPressable?: boolean;
 }>;
 
 const PopMenu: FC<IProps> = ({
@@ -54,6 +36,7 @@ const PopMenu: FC<IProps> = ({
   style,
   menus,
   direction = 'horizontal',
+  isChildrenPressable = false,
 }) => {
   const [showPop, setShowPop] = useState(false);
   const containerRef = useRef<View>(null);
@@ -71,27 +54,31 @@ const PopMenu: FC<IProps> = ({
     [],
   );
 
-  const handleLongPress = (event: GestureResponderEvent) => {
+  const handleLongPress = () => {
     setShowPop(true);
   };
+
+  const pressable = React.cloneElement(
+    isChildrenPressable ? (children as JSX.Element) : <Button />,
+    {
+      ...pressableProps,
+      onLongPress: handleLongPress,
+      onPressIn: () => {
+        isPressing.current = true;
+      },
+      onPressOut: () => {
+        setTimeout(() => {
+          isPressing.current = false;
+        }, 0);
+      },
+      children: children,
+    },
+  );
 
   return (
     <>
       <View ref={containerRef} style={[style, styles.popContainer]}>
-        <Button
-          {...pressableProps}
-          onLongPress={handleLongPress}
-          onPressIn={() => {
-            isPressing.current = true;
-          }}
-          onPressOut={() => {
-            setTimeout(() => {
-              isPressing.current = false;
-            }, 0);
-          }}
-        >
-          {children}
-        </Button>
+        {pressable}
 
         {showPop && (
           <Menus
@@ -154,15 +141,11 @@ const Menus: FC<
 
   return (
     <Animated.View
-      entering={FadeInDown.withCallback(() => {
-        console.log(11);
-      })}
-      exiting={FadeOutUp}
       style={[styles.menuContainer, animatedStyle]}
       // @ts-ignore
       ref={ref}
     >
-      {menus?.map((menu, index) => (
+      {menus?.map((menu) => (
         <Button
           style={styles.menuItem}
           onPress={menu.onPress}

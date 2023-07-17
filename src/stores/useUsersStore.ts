@@ -4,8 +4,11 @@ import lodash from 'lodash';
 import apis from '../services/apis';
 
 interface IUserStore {
+  /**当前在线列表 */
   users: UserItem[];
+  /** 用户缓存列表 */
   cachedUsers: CacheUserItem[];
+  /** 在线列表翻页游标 */
   pageCursor?: string;
   initUsers: () => void;
   fetchUsersByUserIds: (ids: number[]) => Promise<Record<number, CacheUserItem>>;
@@ -20,7 +23,6 @@ const useUsersStore = create<IUserStore>((set, get) => ({
   initUsers: () => {
     get().fetchUsers();
   },
-  // 获取当前在线玩家列表
   fetchUsers: async () => {
     const res = await apis
       .getGroupList({ params: { pageSize: 20, cursor: get().pageCursor } })

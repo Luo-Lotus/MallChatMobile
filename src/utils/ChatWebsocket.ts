@@ -89,6 +89,7 @@ export default class ChatWebsocket extends EventEmitter {
   };
 
   private heartBeat = () => {
+    // BackgroundTimer 后台运行，但是系统会有杀后台的情况 所以不是很有用
     this.timer = BackgroundTimer.setInterval(() => {
       if (this.websocketInst?.readyState === 1) {
         this.send({ type: WsRequestMsgType.HeartBeatDetection });

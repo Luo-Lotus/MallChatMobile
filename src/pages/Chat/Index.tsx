@@ -6,15 +6,9 @@
  */
 
 import React, { useEffect, useRef, useState } from 'react';
-import {
-  FlatList,
-  KeyboardAvoidingView,
-  ListRenderItemInfo,
-  NativeScrollEvent,
-  View,
-} from 'react-native';
+import { FlatList, ListRenderItemInfo, NativeScrollEvent, View } from 'react-native';
 
-import MessageCard from '../../components/MessageCard';
+import ChatCard from '../../components/ChatCard';
 import { useChatStore } from '../../stores/useChatStore';
 import { MessageType } from '../../services/types';
 import MessageInput from '../../components/MessageInput';
@@ -55,17 +49,20 @@ function Chat(): JSX.Element {
     setRefreshing(false);
   };
 
-  const scrollTo = (action: 'history' | 'new' | 'init', changedNumber = 17) => {
+  const scrollTo = (action: 'history' | 'new' | 'init') => {
     console.log(action);
 
-    // const currentOffsetY = currentContent.current?.contentOffset.y;
     setTimeout(() => {
+      // 因为React Native 与原生通信有延迟， 不得不强制延迟执行时间
       switch (action) {
         case 'history':
-          scrollViewRef.current?.scrollToIndex({
-            animated: true,
-            index: 17,
-          });
+          setTimeout(() => {
+            const currentOffsetY = currentContent.current?.contentOffset.y;
+            console.log(currentOffsetY);
+
+            currentOffsetY &&
+              scrollViewRef.current?.scrollToOffset({ offset: currentOffsetY - 300 });
+          }, 500);
           break;
         case 'init':
           setTimeout(() => {
@@ -84,12 +81,13 @@ function Chat(): JSX.Element {
   };
 
   const renderItem = ({ item: message }: ListRenderItemInfo<MessageType>) => (
-    <MessageCard
+    <ChatCard
       key={message.message.id}
       username={message.fromUser.username}
       address={message.fromUser.locPlace}
       avatarUrl={message.fromUser.avatar}
-      message={message.message.body.content}
+      messageBody={message.message.body}
+      type={message.message.type}
       isSelf={user?.uid === message.fromUser.uid}
     />
   );

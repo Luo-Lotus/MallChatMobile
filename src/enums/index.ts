@@ -11,10 +11,8 @@
  * 消息类型
  */
 export enum MsgEnum {
-  /** 未知 */
-  UNKNOWN,
   /** 文本 */
-  TEXT,
+  TEXT = 1,
   /** 撤回 */
   RECALL,
   /** 图片 */
@@ -25,6 +23,8 @@ export enum MsgEnum {
   VOICE,
   /** 视频 */
   VIDEO,
+  /** 表情 */
+  EMOJI,
 }
 
 /**

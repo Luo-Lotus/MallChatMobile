@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { MessageType } from '../services/types';
+import { MessageType, TextBody } from '../services/types';
 import apis from '../services/apis';
 import useUsersStore from './useUsersStore';
 import notificationManager from '../utils/NotificationManager';
@@ -9,14 +9,19 @@ import { WsResponseMessageType } from '../services/wsType';
 import { MsgEnum } from '../enums';
 
 export interface IChatStoreState {
+  /** 消息列表 */
   messages: MessageType[];
+  /** 消息列表翻页游标 */
   pageCursor?: string;
+  /** 收到消息时的回调 */
   onReceiveMessage?: (message: MessageType) => void;
   setOnReceiveMessage: (cb: IChatStoreState['onReceiveMessage']) => void;
   initChat: () => Promise<void>;
   fetchMessages: () => Promise<void>;
   addNewMessage: (event: MessageType) => void;
+  /** 发送文本消息 */
   sendTextMessage: (message: string) => Promise<any>;
+  /** 通过消息列表拿到对应的用户，组合为新数组 */
   combineMessageWithUser: (messages: MessageType[]) => Promise<MessageType[]>;
 }
 
@@ -56,7 +61,7 @@ export const useChatStore = create<IChatStoreState>((set, get) => ({
       notificationManager.pushNotification({
         title: `${message.fromUser.username}发送了一条消息`,
         largeIconUrl: message.fromUser.avatar,
-        message: message.message.body.content,
+        message: (message.message.body as TextBody).content,
         id: 1,
       });
     }
