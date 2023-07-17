@@ -1,3 +1,5 @@
+<img src="https://github.com/Luo-Lotus/MallChatMobile/assets/98867591/0a5d1096-c2d0-445f-bc86-7b5e2ac9dded" alt="图片替换文本" width="400" align="bottom" />
+
 # 技术栈
 
 - 语言: `Typescript`
