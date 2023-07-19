@@ -1,0 +1,144 @@
+diff --git a/.vscode/settings.json b/.vscode/settings.json
+new file mode 100644
+index 0000000000000000000000000000000000000000..d0f92b43cbb3e563ea963d8bb01834d40c3d1f82
+--- /dev/null
++++ b/.vscode/settings.json
+@@ -0,0 +1,4 @@
++{
++    "editor.fontSize": 14,
++    "editor.formatOnSave": false
++}
+diff --git a/esm/context.mjs b/esm/context.mjs
+index ca225fa6007c00493e58075971187673fbee7985..6bd3f844fbf9d9d61caba4d1fb4359582a3030b9 100644
+--- a/esm/context.mjs
++++ b/esm/context.mjs
+@@ -2,11 +2,6 @@ import { createContext as createContext$1, useRef, createElement, useContext, us
+ import { useStore } from 'zustand';
+ 
+ function createContext() {
+-  if ((import.meta.env ? import.meta.env.MODE : void 0) !== "production") {
+-    console.warn(
+-      "[DEPRECATED] `context` will be removed in a future version. Instead use `import { createStore, useStore } from 'zustand'`. See: https://github.com/pmndrs/zustand/discussions/1180."
+-    );
+-  }
+   const ZustandContext = createContext$1(void 0);
+   const Provider = ({
+     createStore,
+diff --git a/esm/index.mjs b/esm/index.mjs
+index 4afb17d50592cab02f45dfb1e89651668dff7816..df8f689efa1c2294205ae50ad66a777cb6d9f98f 100644
+--- a/esm/index.mjs
++++ b/esm/index.mjs
+@@ -16,11 +16,6 @@ function useStore(api, selector = api.getState, equalityFn) {
+   return slice;
+ }
+ const createImpl = (createState) => {
+-  if ((import.meta.env ? import.meta.env.MODE : void 0) !== "production" && typeof createState !== "function") {
+-    console.warn(
+-      "[DEPRECATED] Passing a vanilla store will be unsupported in a future version. Instead use `import { useStore } from 'zustand'`."
+-    );
+-  }
+   const api = typeof createState === "function" ? createStore(createState) : createState;
+   const useBoundStore = (selector, equalityFn) => useStore(api, selector, equalityFn);
+   Object.assign(useBoundStore, api);
+@@ -28,11 +23,6 @@ const createImpl = (createState) => {
+ };
+ const create = (createState) => createState ? createImpl(createState) : createImpl;
+ var react = (createState) => {
+-  if ((import.meta.env ? import.meta.env.MODE : void 0) !== "production") {
+-    console.warn(
+-      "[DEPRECATED] Default export is deprecated. Instead use `import { create } from 'zustand'`."
+-    );
+-  }
+   return create(createState);
+ };
+ 
+diff --git a/esm/middleware.mjs b/esm/middleware.mjs
+index c0b9cadd4ebbfa99de7f364a765bb864e9f0e1b2..b966a34a7ce6ecd8785a7c26af253d08f9d9ba1b 100644
+--- a/esm/middleware.mjs
++++ b/esm/middleware.mjs
+@@ -39,15 +39,10 @@ const devtoolsImpl = (fn, devtoolsOptions = {}) => (set, get, api) => {
+   const { enabled, anonymousActionType, store, ...options } = devtoolsOptions;
+   let extensionConnector;
+   try {
+-    extensionConnector = (enabled != null ? enabled : (import.meta.env ? import.meta.env.MODE : void 0) !== "production") && window.__REDUX_DEVTOOLS_EXTENSION__;
++    extensionConnector = false;
+   } catch (e) {
+   }
+   if (!extensionConnector) {
+-    if ((import.meta.env ? import.meta.env.MODE : void 0) !== "production" && enabled) {
+-      console.warn(
+-        "[zustand devtools middleware] Please install/enable Redux devtools extension"
+-      );
+-    }
+     return fn(set, get, api);
+   }
+   const { connection, ...connectionInformation } = extractConnectionInformation(store, extensionConnector, options);
+@@ -97,12 +92,6 @@ const devtoolsImpl = (fn, devtoolsOptions = {}) => (set, get, api) => {
+     let didWarnAboutReservedActionType = false;
+     const originalDispatch = api.dispatch;
+     api.dispatch = (...a) => {
+-      if ((import.meta.env ? import.meta.env.MODE : void 0) !== "production" && a[0].type === "__setState" && !didWarnAboutReservedActionType) {
+-        console.warn(
+-          '[zustand devtools middleware] "__setState" action type is reserved to set state from the devtools. Avoid using it.'
+-        );
+-        didWarnAboutReservedActionType = true;
+-      }
+       originalDispatch(...a);
+     };
+   }
+@@ -569,11 +558,6 @@ const newImpl = (config, baseOptions) => (set, get, api) => {
+ };
+ const persistImpl = (config, baseOptions) => {
+   if ("getStorage" in baseOptions || "serialize" in baseOptions || "deserialize" in baseOptions) {
+-    if ((import.meta.env ? import.meta.env.MODE : void 0) !== "production") {
+-      console.warn(
+-        "[DEPRECATED] `getStorage`, `serialize` and `deserialize` options are deprecated. Use `storage` option instead."
+-      );
+-    }
+     return oldImpl(config, baseOptions);
+   }
+   return newImpl(config, baseOptions);
+diff --git a/esm/shallow.mjs b/esm/shallow.mjs
+index 2ff45dfa5a1451551dadf60765de77a62ab9338f..57e8dff198048c46e3f88b04baf065300ff6a97c 100644
+--- a/esm/shallow.mjs
++++ b/esm/shallow.mjs
+@@ -37,11 +37,6 @@ function shallow(objA, objB) {
+   return true;
+ }
+ var shallow$1 = (objA, objB) => {
+-  if ((import.meta.env ? import.meta.env.MODE : void 0) !== "production") {
+-    console.warn(
+-      "[DEPRECATED] Default export is deprecated. Instead use `import { shallow } from 'zustand/shallow'`."
+-    );
+-  }
+   return shallow(objA, objB);
+ };
+ 
+diff --git a/esm/vanilla.mjs b/esm/vanilla.mjs
+index 89bcc9023e7468b9e68fb1f7b8ed87332da57150..ce528d9018027ef6791095def6980fac98daa4ef 100644
+--- a/esm/vanilla.mjs
++++ b/esm/vanilla.mjs
+@@ -15,11 +15,6 @@ const createStoreImpl = (createState) => {
+     return () => listeners.delete(listener);
+   };
+   const destroy = () => {
+-    if ((import.meta.env ? import.meta.env.MODE : void 0) !== "production") {
+-      console.warn(
+-        "[DEPRECATED] The `destroy` method will be unsupported in a future version. Instead use unsubscribe function returned by subscribe. Everything will be garbage-collected if store is garbage-collected."
+-      );
+-    }
+     listeners.clear();
+   };
+   const api = { setState, getState, subscribe, destroy };
+@@ -28,11 +23,6 @@ const createStoreImpl = (createState) => {
+ };
+ const createStore = (createState) => createState ? createStoreImpl(createState) : createStoreImpl;
+ var vanilla = (createState) => {
+-  if ((import.meta.env ? import.meta.env.MODE : void 0) !== "production") {
+-    console.warn(
+-      "[DEPRECATED] Default export is deprecated. Instead use import { createStore } from 'zustand/vanilla'."
+-    );
+-  }
+   return createStore(createState);
+ };
+ 

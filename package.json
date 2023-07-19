@@ -6,8 +6,7 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "lint": "eslint .",
-    "start": "react-native start",
-    "test": "RNFB_ANDROID_PERMISSIONS=true react-native link rn-fetch-blob"
+    "start": "react-native start"
   },
   "dependencies": {
     "@react-native-camera-roll/camera-roll": "^5.7.2",
@@ -60,5 +59,10 @@
   },
   "engines": {
     "node": ">=16"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "zustand@4.3.9": "patches/zustand@4.3.9.patch"
+    }
   }
 }
