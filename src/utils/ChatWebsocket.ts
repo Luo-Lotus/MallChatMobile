@@ -61,7 +61,7 @@ export default class ChatWebsocket extends EventEmitter {
     }
   };
 
-  private init = () => {
+  public init = () => {
     this.websocketInst = new WebSocket(this.url);
     this.websocketInst.onmessage = (event) => {
       this.dispatchMessage(JSON.parse(event.data));
@@ -80,9 +80,9 @@ export default class ChatWebsocket extends EventEmitter {
     };
   };
 
-  private isClosed = () => (this.websocketInst?.readyState || 3) === 3;
+  public isClosed = () => (this.websocketInst?.readyState || 3) === 3;
 
-  private reconnection = () => {
+  public reconnection = () => {
     if (this.isClosed()) {
       this.init();
     }
@@ -97,11 +97,11 @@ export default class ChatWebsocket extends EventEmitter {
     }, 10000);
   };
 
-  clearHearBeat = () => {
+  public clearHearBeat = () => {
     BackgroundTimer.clearInterval(this.timer);
   };
 
-  clearAll = () => {
+  public clearAll = () => {
     this.removeAllListeners();
     this.clearHearBeat();
   };

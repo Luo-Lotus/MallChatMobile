@@ -116,7 +116,7 @@ const Menus: FC<
           position: 'absolute',
           backgroundColor: 'white',
           borderRadius: 10,
-          top: -40,
+          top: -50,
           color: 'white',
         },
         menuItem: {

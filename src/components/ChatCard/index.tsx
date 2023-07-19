@@ -1,6 +1,7 @@
 import React, { FC, useEffect, useMemo } from 'react';
 import { Image, StyleSheet, View, Text } from 'react-native';
-import PopMenu from '../Popmenu';
+import lodash from 'lodash';
+import PopMenu, { PopMenuItem } from '../Popmenu';
 import { MsgEnum } from '../../enums';
 import TextMsg from './components/TextMsg';
 import Recall from './components/Recall';
@@ -10,6 +11,8 @@ import Voice from './components/Voice';
 import Video from './components/Video';
 import { EmojiBody, ImageBody, MsgType, TextBody } from '../../services/types';
 import Emoji from './components/Emoji';
+import { useClipboard } from '@react-native-clipboard/clipboard';
+import { useChatStore } from '../../stores/useChatStore';
 
 type IProps = {
   username: string;
@@ -17,6 +20,7 @@ type IProps = {
   address: string;
   avatarUrl: string;
   type: MsgEnum;
+  msgId: number;
   isSelf?: boolean;
 };
 // import { MarkdownView } from 'react-native-markdown-view';
@@ -30,14 +34,26 @@ const ChatCard: FC<IProps> = ({
   avatarUrl,
   isSelf = false,
   type,
+  msgId,
 }) => {
-  useEffect(() => {
-    // RTNCalculator?.add(Math.PI, 0.1).then((res) => {
-    //   console.log('js计算结果', Math.PI + 0.1);
-    //   console.log(RTNCalculator?.myEquals('哈哈', '哈哈'));
-    //   console.log('java计算结果', res);
-    // });
-  }, []);
+  const [data, setString] = useClipboard();
+  const { recallMessage } = useChatStore();
+
+  const menus = useMemo<PopMenuItem[]>(
+    () =>
+      lodash.compact([
+        { label: '复制', onPress: () => setString((messageBody as TextBody).content) },
+        isSelf
+          ? {
+              label: '撤回',
+              onPress: () => {
+                recallMessage(msgId);
+              },
+            }
+          : undefined,
+      ]),
+    [],
+  );
 
   const styles = useMemo(
     () =>
@@ -67,6 +83,7 @@ const ChatCard: FC<IProps> = ({
         messageBubble: {
           backgroundColor: isSelf ? '#1D90F5' : '#383C4B',
           [isSelf ? 'borderTopRightRadius' : 'borderTopLeftRadius']: 5,
+          [isSelf ? 'marginLeft' : 'marginRight']: 40,
           borderRadius: 20,
           padding: 10,
           paddingHorizontal: 20,
@@ -106,7 +123,7 @@ const ChatCard: FC<IProps> = ({
           <Text style={styles.usernameText}>{`${username} (${address || '未知'})`}</Text>
         </View>
         <PopMenu
-          menus={[{ label: '复制' }, { label: '粘贴' }]}
+          menus={menus}
           style={{ alignSelf: isSelf ? 'flex-end' : 'flex-start', marginTop: 5 }}
           pressableProps={{
             unstable_pressDelay: 100,

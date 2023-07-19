@@ -8,6 +8,9 @@ dependencies:
   '@react-native-camera-roll/camera-roll':
     specifier: ^5.7.2
     version: 5.7.2(react-native@0.72.1)
+  '@react-native-clipboard/clipboard':
+    specifier: ^1.11.2
+    version: 1.11.2(react-native@0.72.1)(react@18.2.0)
   '@react-navigation/bottom-tabs':
     specifier: ^6.5.8
     version: 6.5.8(@react-navigation/native@6.1.7)(react-native-safe-area-context@4.6.4)(react-native-screens@3.22.1)(react-native@0.72.1)(react@18.2.0)
@@ -1812,6 +1815,16 @@ packages:
     peerDependencies:
       react-native: '>=0.59'
     dependencies:
+      react-native: 0.72.1(@babel/core@7.20.2)(@babel/preset-env@7.20.2)(react@18.2.0)
+    dev: false
+
+  /@react-native-clipboard/clipboard@1.11.2(react-native@0.72.1)(react@18.2.0):
+    resolution: {integrity: sha512-bHyZVW62TuleiZsXNHS1Pv16fWc0fh8O9WvBzl4h2fykqZRW9a+Pv/RGTH56E3X2PqzHP38K5go8zmCZUoIsoQ==}
+    peerDependencies:
+      react: '>=16.0'
+      react-native: '>=0.57.0'
+    dependencies:
+      react: 18.2.0
       react-native: 0.72.1(@babel/core@7.20.2)(@babel/preset-env@7.20.2)(react@18.2.0)
     dev: false
 

@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { MessageType, TextBody } from '../services/types';
+import { MessageType, RevokedMsgType, TextBody } from '../services/types';
 import apis from '../services/apis';
 import useUsersStore from './useUsersStore';
 import notificationManager from '../utils/NotificationManager';
@@ -18,9 +18,14 @@ export interface IChatStoreState {
   setOnReceiveMessage: (cb: IChatStoreState['onReceiveMessage']) => void;
   initChat: () => Promise<void>;
   fetchMessages: () => Promise<void>;
+
   addNewMessage: (event: MessageType) => void;
+  markRecallMessage: (event: RevokedMsgType) => void;
+
   /** 发送文本消息 */
-  sendTextMessage: (message: string) => Promise<any>;
+  sendTextMessage: (message: string) => Promise<MessageType | void>;
+  recallMessage: (msgId: number) => Promise<void>;
+
   /** 通过消息列表拿到对应的用户，组合为新数组 */
   combineMessageWithUser: (messages: MessageType[]) => Promise<MessageType[]>;
 }
@@ -39,6 +44,10 @@ export const useChatStore = create<IChatStoreState>((set, get) => ({
     chatWebSocket.addListener(
       ChatWebsocketEvent[WsResponseMessageType.ReceiveMessage],
       get().addNewMessage,
+    );
+    chatWebSocket.addListener(
+      ChatWebsocketEvent[WsResponseMessageType.WSMsgRecall],
+      get().markRecallMessage,
     );
   },
   fetchMessages: async () => {
@@ -66,21 +75,45 @@ export const useChatStore = create<IChatStoreState>((set, get) => ({
       });
     }
   },
-  sendTextMessage: (text) => {
-    return apis
-      .sendMsg({
-        roomId: 1,
-        msgType: MsgEnum.TEXT,
-        body: {
-          content: text,
-        },
-      })
+  markRecallMessage: async ({ msgId }) => {
+    console.log('撤回消息', msgId);
+
+    set((state) => {
+      const message = state.messages.find((item) => item.message.id === msgId);
+      if (message) {
+        message.message.type = MsgEnum.RECALL;
+        message.message.body = `"${message.fromUser.username}"撤回了一条信息`;
+      }
+      return {
+        messages: [...state.messages],
+      };
+    });
+  },
+  sendTextMessage: async (text) => {
+    try {
+      const message = await apis
+        .sendMsg({
+          roomId: 1,
+          msgType: MsgEnum.TEXT,
+          body: {
+            content: text,
+          },
+        })
+        .send();
+      get().addNewMessage(message);
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  recallMessage: async (msgId) => {
+    apis
+      .recallMsg({ msgId, roomId: 1 })
       .send()
-      .then((message) => {
-        get().addNewMessage(message);
+      .then(() => {
+        get().markRecallMessage({ msgId });
       })
-      .catch((res) => {
-        console.log(res);
+      .catch((err) => {
+        console.log(err);
       });
   },
   combineMessageWithUser: async (messages) => {

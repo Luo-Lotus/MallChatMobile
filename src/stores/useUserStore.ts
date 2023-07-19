@@ -13,6 +13,7 @@ interface IUserStore {
   fetchBadge: () => void;
   getToken: () => string | undefined;
   setToken: (token: string) => void;
+  isLogin: () => boolean;
   login: () => void;
   logout: () => void;
   setUser: (user: UserInfoType) => void;
@@ -41,6 +42,7 @@ const useUserStore = create<IUserStore>((set, get) => ({
   setToken: (token) => {
     storage.set(StorageKey.USER_TOKEN, token);
   },
+  isLogin: () => !!get().user,
   login: () => {
     const token = get().getToken();
     token && chatWebSocket.send({ type: WsRequestMsgType.Authorization, data: { token } });

@@ -1,18 +1,10 @@
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
-import {
-  Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { StyleSheet, Text, TextInput, View } from 'react-native';
 import useKeyboard from '../../hooks/useKeyboard';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import Button from '../Button';
+import useUserStore from '../../stores/useUserStore';
 
 type IProps = {
   onSendText?: (text: string) => void;
@@ -20,10 +12,9 @@ type IProps = {
 
 const MessageInput: FC<IProps> = ({ onSendText }) => {
   const [text, setText] = useState('');
-  const blockRef = useRef<View>(null);
-  const inputWrapperRef = useRef<TextInput>(null);
   const { keyboardHeight } = useKeyboard();
   const bottomTabBarHeight = useBottomTabBarHeight();
+  const { isLogin } = useUserStore();
 
   const sharedValue = useSharedValue(0);
 
@@ -98,7 +89,7 @@ const MessageInput: FC<IProps> = ({ onSendText }) => {
         />
         <Button
           style={styles.sendButton}
-          disabled={!text}
+          disabled={!text || !isLogin()}
           onPress={() => {
             onSendText?.(text);
             setText('');

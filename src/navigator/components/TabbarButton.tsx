@@ -5,6 +5,7 @@ import Animated, { useAnimatedStyle, useSharedValue } from 'react-native-reanima
 
 const AnimatedButton = Animated.createAnimatedComponent(Button);
 
+// TODO: Tabbar动画
 const TabbarButton: FC<BottomTabBarButtonProps> = (props) => {
   const sharedValue = useSharedValue(0);
 

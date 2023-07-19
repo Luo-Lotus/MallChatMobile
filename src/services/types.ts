@@ -269,7 +269,7 @@ export type MsgType = {
   /** 消息类型 */
   type: MsgEnum;
   /** 动态消息体-`根据消息类型变化` */
-  body: TextBody | ImageBody | VoiceBody | VideoBody | FileBody | EmojiBody;
+  body: TextBody | ImageBody | VoiceBody | VideoBody | FileBody | EmojiBody | string;
   /** 发送时间戳 */
   sendTime: number;
   /** 消息互动信息 */

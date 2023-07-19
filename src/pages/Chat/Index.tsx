@@ -1,11 +1,4 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
-import React, { useEffect, useRef, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { FlatList, ListRenderItemInfo, NativeScrollEvent, View } from 'react-native';
 
 import ChatCard from '../../components/ChatCard';
@@ -15,7 +8,7 @@ import MessageInput from '../../components/MessageInput';
 import useKeyboard from '../../hooks/useKeyboard';
 import useUserStore from '../../stores/useUserStore';
 
-function Chat(): JSX.Element {
+const Chat: FC = () => {
   const [refreshing, setRefreshing] = useState(false);
   const { initChat, fetchMessages, messages, setOnReceiveMessage, sendTextMessage } =
     useChatStore();
@@ -89,6 +82,7 @@ function Chat(): JSX.Element {
       messageBody={message.message.body}
       type={message.message.type}
       isSelf={user?.uid === message.fromUser.uid}
+      msgId={message.message.id}
     />
   );
 
@@ -115,6 +109,6 @@ function Chat(): JSX.Element {
       <MessageInput onSendText={sendTextMessage} />
     </>
   );
-}
+};
 
 export default Chat;

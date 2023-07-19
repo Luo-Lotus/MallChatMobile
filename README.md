@@ -10,16 +10,22 @@
 
 **需要按官网搭建安卓等运行环境**
 安装依赖
+
 `pnpm install`
+
 android 运行：
+
 `pnpm run android`
+
 ios 暂未进行适配
 
 # 调试
 
-通过 android 安装好 app 后（每次对`/android`文件进行修改或安装新的依赖后需要重新安装 app），`pnpm run start`即可进行调试
+通过 android 安装好 app 后（每次对`/android`文件进行修改或安装新的依赖后需要重新安装 app），
 
-## 真机 usb 连接/虚拟机
+`pnpm run start`即可进行调试
+
+## 真机 usb 连接/模拟器
 
 start 命令后即可进行调试
 
