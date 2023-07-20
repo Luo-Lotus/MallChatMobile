@@ -13,6 +13,8 @@ import { EmojiBody, ImageBody, MsgType, TextBody } from '../../services/types';
 import Emoji from './components/Emoji';
 import { useClipboard } from '@react-native-clipboard/clipboard';
 import { useChatStore } from '../../stores/useChatStore';
+import useUserStore from '../../stores/useUserStore';
+import ReplyCard from '../ReplyCard';
 
 type IProps = {
   username: string;
@@ -37,23 +39,32 @@ const ChatCard: FC<IProps> = ({
   msgId,
 }) => {
   const [data, setString] = useClipboard();
-  const { recallMessage } = useChatStore();
+  const { recallMessage, setCurrentReplyingMsgId, inputRef } = useChatStore();
+  const { isLogin } = useUserStore();
 
-  const menus = useMemo<PopMenuItem[]>(
-    () =>
-      lodash.compact([
-        { label: '复制', onPress: () => setString((messageBody as TextBody).content) },
-        isSelf
-          ? {
-              label: '撤回',
-              onPress: () => {
-                recallMessage(msgId);
-              },
-            }
-          : undefined,
-      ]),
-    [],
-  );
+  const menus = useMemo<PopMenuItem[]>(() => {
+    const selfMenuItems = [
+      {
+        label: '撤回',
+        onPress: () => {
+          recallMessage(msgId);
+        },
+      },
+    ];
+    const otherMenuItems = [
+      isLogin() && {
+        label: '回复',
+        onPress: () => {
+          setCurrentReplyingMsgId(msgId);
+          inputRef.current?.focus();
+        },
+      },
+    ];
+    return lodash.compact([
+      { label: '复制', onPress: () => setString((messageBody as TextBody).content) },
+      ...(isSelf ? selfMenuItems : otherMenuItems),
+    ]);
+  }, []);
 
   const styles = useMemo(
     () =>
@@ -86,10 +97,10 @@ const ChatCard: FC<IProps> = ({
           [isSelf ? 'marginLeft' : 'marginRight']: 40,
           borderRadius: 20,
           padding: 10,
-          paddingHorizontal: 20,
+          paddingHorizontal: 15,
           overflow: 'hidden',
         },
-        messageText: { color: 'white', fontSize: 15 },
+        messageText: { color: 'white', fontSize: 18, fontWeight: '900' },
       }),
     [],
   );
@@ -134,6 +145,14 @@ const ChatCard: FC<IProps> = ({
         >
           {renderMessageBody()}
         </PopMenu>
+        {messageBody.reply && (
+          <ReplyCard
+            message={messageBody.reply}
+            size="small"
+            layoutAnimation={false}
+            style={{ alignSelf: isSelf ? 'flex-end' : 'flex-start' }}
+          />
+        )}
       </View>
     </View>
   );

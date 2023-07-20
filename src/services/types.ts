@@ -244,6 +244,7 @@ export type FileBody = {
 };
 /** 文本消息体 */
 export type TextBody = {
+  atUidList: number[];
   /** 消息内容 */
   content: string;
   /** 回复 */
@@ -252,7 +253,7 @@ export type TextBody = {
    * 消息链接映射
    * @deprecated 即将废弃？
    */
-  urlTitleMap: Record<string, string>;
+  urlContentMap: Record<string, string>;
 };
 
 /** 表情消息 */
@@ -269,7 +270,9 @@ export type MsgType = {
   /** 消息类型 */
   type: MsgEnum;
   /** 动态消息体-`根据消息类型变化` */
-  body: TextBody | ImageBody | VoiceBody | VideoBody | FileBody | EmojiBody | string;
+  body: (TextBody | ImageBody | VoiceBody | VideoBody | FileBody | EmojiBody | string) & {
+    reply: ReplyType;
+  };
   /** 发送时间戳 */
   sendTime: number;
   /** 消息互动信息 */
@@ -277,6 +280,7 @@ export type MsgType = {
 };
 
 export type ReplyType = {
+  uid: number;
   id: number;
   username: string;
   type: MsgEnum;

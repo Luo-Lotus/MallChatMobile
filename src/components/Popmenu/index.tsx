@@ -79,7 +79,6 @@ const PopMenu: FC<IProps> = ({
     <>
       <View ref={containerRef} style={[style, styles.popContainer]}>
         {pressable}
-
         {showPop && (
           <Menus
             direction={direction}
@@ -120,12 +119,12 @@ const Menus: FC<
           color: 'white',
         },
         menuItem: {
-          paddingHorizontal: 10,
+          padding: 5,
           paddingVertical: 10,
         },
         menuLabel: {
           color: 'black',
-          fontSize: 16,
+          fontSize: 14,
         },
       }),
     [],
@@ -145,9 +144,13 @@ const Menus: FC<
       // @ts-ignore
       ref={ref}
     >
-      {menus?.map((menu) => (
+      {menus?.map((menu, index) => (
         <Button
-          style={styles.menuItem}
+          style={[
+            styles.menuItem,
+            index === 0 ? { paddingLeft: 10 } : undefined,
+            index === menus.length - 1 ? { paddingRight: 10 } : undefined,
+          ]}
           onPress={menu.onPress}
           onPressOut={handleCloseMenuAnimation}
           key={menu.label}

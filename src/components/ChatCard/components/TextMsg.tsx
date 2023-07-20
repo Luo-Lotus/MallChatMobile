@@ -6,7 +6,8 @@ const TextMsg: FC<{ text: string; isSelf: boolean }> = ({ text, isSelf }) => {
     <Text
       style={{
         color: 'white',
-        fontSize: 15,
+        fontSize: 16,
+        fontWeight: '400',
       }}
     >
       {text}

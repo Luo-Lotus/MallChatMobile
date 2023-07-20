@@ -10,17 +10,17 @@ import useUserStore from '../../stores/useUserStore';
 
 const Chat: FC = () => {
   const [refreshing, setRefreshing] = useState(false);
-  const { initChat, fetchMessages, messages, setOnReceiveMessage, sendTextMessage } =
+  const { initChat, fetchMessages, messages, setOnReceiveMessage, sendTextMessage, setListRef } =
     useChatStore();
   const { user } = useUserStore();
   const scrollViewRef = useRef<FlatList>(null);
   const currentContent = useRef<NativeScrollEvent>();
 
-  const { keyboardHeight, Keyboard } = useKeyboard();
+  const { keyboardHeight } = useKeyboard();
 
   useEffect(() => {
     if (keyboardHeight) {
-      scrollViewRef.current?.scrollToEnd();
+      scrollTo('new');
     }
   }, [keyboardHeight]);
 
@@ -33,6 +33,7 @@ const Chat: FC = () => {
     setOnReceiveMessage(() => {
       scrollTo('new');
     });
+    setListRef(scrollViewRef);
   }, []);
 
   const handleRefresh = async () => {
@@ -98,7 +99,7 @@ const Chat: FC = () => {
           minIndexForVisible: 0,
         }}
         ListFooterComponent={<View />}
-        ListFooterComponentStyle={{ height: keyboardHeight || 80 }}
+        ListFooterComponentStyle={{ height: keyboardHeight || 90 }}
         initialNumToRender={20}
         keyExtractor={(item) => String(item.message.id)}
         onScroll={(event) => {

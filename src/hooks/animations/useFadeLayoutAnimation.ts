@@ -31,7 +31,7 @@ const useFadeLayoutAnimation = () => {
         duration: 200,
       },
       () => {
-        onEnterOver && runOnJS(onEnterOver);
+        onEnterOver && runOnJS(onEnterOver)();
       },
     ));
 

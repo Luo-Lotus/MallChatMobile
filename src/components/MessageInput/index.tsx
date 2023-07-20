@@ -1,10 +1,13 @@
-import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 import useKeyboard from '../../hooks/useKeyboard';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import Button from '../Button';
 import useUserStore from '../../stores/useUserStore';
+import useReplyMessage from './hooks/useReplyMessage';
+import ReplyCard from '../ReplyCard/index';
+import { useChatStore } from '../../stores/useChatStore';
 
 type IProps = {
   onSendText?: (text: string) => void;
@@ -12,10 +15,11 @@ type IProps = {
 
 const MessageInput: FC<IProps> = ({ onSendText }) => {
   const [text, setText] = useState('');
-  const { keyboardHeight } = useKeyboard();
+  const { keyboardHeight, Keyboard } = useKeyboard();
   const bottomTabBarHeight = useBottomTabBarHeight();
   const { isLogin } = useUserStore();
-
+  const { message, cancelReply } = useReplyMessage();
+  const { inputRef } = useChatStore();
   const sharedValue = useSharedValue(0);
 
   const animatedStyle = useAnimatedStyle(
@@ -24,6 +28,13 @@ const MessageInput: FC<IProps> = ({ onSendText }) => {
     }),
     [keyboardHeight],
   );
+
+  useEffect(() => {
+    const subscription = Keyboard.addListener('keyboardDidHide', () => {
+      inputRef.current?.blur();
+    });
+    return () => Keyboard.removeSubscription(subscription);
+  }, []);
 
   useEffect(() => {
     sharedValue.value = withSpring(keyboardHeight && keyboardHeight - bottomTabBarHeight, {
@@ -79,8 +90,10 @@ const MessageInput: FC<IProps> = ({ onSendText }) => {
 
   return (
     <Animated.View style={[styles.container, animatedStyle]}>
+      <ReplyCard message={message} onPress={cancelReply} />
       <View style={styles.inputWrapper}>
         <TextInput
+          ref={inputRef}
           value={text}
           onChangeText={setText}
           multiline={true}
