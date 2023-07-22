@@ -15,6 +15,7 @@ import { useClipboard } from '@react-native-clipboard/clipboard';
 import { useChatStore } from '../../stores/useChatStore';
 import useUserStore from '../../stores/useUserStore';
 import ReplyCard from '../ReplyCard';
+import { showToast } from '../Toast/Index';
 
 type IProps = {
   username: string;
@@ -61,7 +62,13 @@ const ChatCard: FC<IProps> = ({
       },
     ];
     return lodash.compact([
-      { label: '复制', onPress: () => setString((messageBody as TextBody).content) },
+      {
+        label: '复制',
+        onPress: () => {
+          setString((messageBody as TextBody).content);
+          showToast({ message: '复制成功', type: 'normal' });
+        },
+      },
       ...(isSelf ? selfMenuItems : otherMenuItems),
     ]);
   }, []);

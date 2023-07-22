@@ -4,6 +4,7 @@ import GlobalFetch from 'alova/GlobalFetch';
 import { Alert } from 'react-native';
 import storage from '../utils/storage';
 import StorageKey from '../constants/StorageKey';
+import { showToast } from '../components/Toast/Index';
 
 function getToken() {
   let tempToken = '';
@@ -54,7 +55,7 @@ export const alovaIns = createAlova({
         if (!computedToken.get() && response.status === 401) {
           //
         } else {
-          Alert.alert(json.errMsg);
+          showToast({ message: json.errMsg, type: 'normal' });
         }
         throw new Error(json.errMsg);
       } else {
