@@ -74,16 +74,18 @@ const Chat: FC = () => {
     }, 0);
   };
 
-  const renderItem = ({ item: message }: ListRenderItemInfo<MessageType>) => (
+  const renderItem = ({ item: message, index }: ListRenderItemInfo<MessageType>) => (
     <ChatCard
       key={message.message.id}
-      username={message.fromUser.username}
+      username={message.fromUser.name}
+      badgeId={message.fromUser.wearingItemId}
       address={message.fromUser.locPlace}
       avatarUrl={message.fromUser.avatar}
       messageBody={message.message.body}
       type={message.message.type}
       isSelf={user?.uid === message.fromUser.uid}
       msgId={message.message.id}
+      index={index}
     />
   );
 

@@ -28,7 +28,7 @@ export interface IChatStoreState {
   setInputRef: (ref: IChatStoreState['inputRef']) => void;
 
   initChat: () => Promise<void>;
-  fetchMessages: () => Promise<void>;
+  fetchMessages: (pageSize?: number, roomId?: number) => Promise<void>;
 
   addNewMessage: (event: MessageType) => void;
   markRecallMessage: (event: RevokedMsgType) => void;
@@ -71,9 +71,9 @@ export const useChatStore = create<IChatStoreState>((set, get) => ({
       get().markRecallMessage,
     );
   },
-  fetchMessages: async () => {
+  fetchMessages: async (pageSize = 20, roomId = 1) => {
     const res = await apis
-      .getMsgList({ params: { pageSize: 20, roomId: 1, cursor: get().pageCursor } })
+      .getMsgList({ params: { pageSize, roomId, cursor: get().pageCursor } })
       .send();
     const messages = await get().combineMessageWithUser(res.list);
     set({
@@ -89,7 +89,7 @@ export const useChatStore = create<IChatStoreState>((set, get) => ({
       }));
       get().onReceiveMessage?.(message);
       notificationManager.pushNotification({
-        title: `${message.fromUser.username}发送了一条消息`,
+        title: `${message.fromUser.name}发送了一条消息`,
         largeIconUrl: message.fromUser.avatar,
         message: (message.message.body as TextBody).content,
         id: 1,
@@ -103,7 +103,7 @@ export const useChatStore = create<IChatStoreState>((set, get) => ({
       const message = state.messages.find((item) => item.message.id === msgId);
       if (message) {
         message.message.type = MsgEnum.RECALL;
-        message.message.body = `"${message.fromUser.username}"撤回了一条信息` as any;
+        message.message.body = `"${message.fromUser.name}"撤回了一条信息` as any;
       }
       return {
         messages: [...state.messages],
@@ -148,7 +148,7 @@ export const useChatStore = create<IChatStoreState>((set, get) => ({
       const user = groupedUsers[message.fromUser.uid];
       message.fromUser = {
         ...user,
-        username: user.name,
+        name: user.name,
       };
       return message;
     });

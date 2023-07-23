@@ -11,7 +11,7 @@ const useReplyMessage = () => {
     }
     return {
       body: (item.message.body as TextBody)?.content,
-      username: item.fromUser.username,
+      username: item.fromUser.name,
       type: item.message.type,
     };
   }, [currentReplyingMsgId]);

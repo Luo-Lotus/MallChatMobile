@@ -20,11 +20,13 @@ import { showToast } from '../Toast/Index';
 type IProps = {
   username: string;
   messageBody: MsgType['body'];
+  badgeId?: number;
   address: string;
   avatarUrl: string;
   type: MsgEnum;
   msgId: number;
   isSelf?: boolean;
+  index: number;
 };
 // import { MarkdownView } from 'react-native-markdown-view';
 
@@ -38,10 +40,13 @@ const ChatCard: FC<IProps> = ({
   isSelf = false,
   type,
   msgId,
+  badgeId,
+  index,
 }) => {
   const [data, setString] = useClipboard();
-  const { recallMessage, setCurrentReplyingMsgId, inputRef } = useChatStore();
-  const { isLogin } = useUserStore();
+  const { recallMessage, setCurrentReplyingMsgId, inputRef, listRef, fetchMessages } =
+    useChatStore();
+  const { isLogin, badges } = useUserStore();
 
   const menus = useMemo<PopMenuItem[]>(() => {
     const selfMenuItems = [
@@ -91,8 +96,17 @@ const ChatCard: FC<IProps> = ({
         },
         contentWrapper: {
           flex: 1,
+          marginTop: 5,
         },
-        username: {},
+        username: {
+          flexDirection: isSelf ? 'row-reverse' : 'row',
+          alignItems: 'center',
+        },
+        badgeImage: {
+          [isSelf ? 'marginLeft' : 'marginRight']: 5,
+          width: 18,
+          height: 18,
+        },
         usernameText: {
           fontSize: 12,
           color: '#999',
@@ -112,6 +126,34 @@ const ChatCard: FC<IProps> = ({
     [],
   );
 
+  const shouldRenderBubble = () => [MsgEnum.TEXT].includes(type);
+  const shouldRenderChildrenPressable = () => [MsgEnum.IMAGE].includes(type);
+
+  const handleScrollToReplyMessage = async () => {
+    const { reply } = messageBody;
+    if (reply) {
+      if (!reply.canCallback) {
+        showToast({ message: '消息好像消失了，无法跳转哦~', type: 'normal' });
+      } else {
+        if (index >= reply.gapCount) {
+          listRef.current?.scrollToIndex({
+            index: index - reply.gapCount,
+            viewPosition: 0,
+            viewOffset: 100,
+          });
+        } else {
+          const unLoadMessageCount = reply.gapCount - index;
+          await fetchMessages(unLoadMessageCount);
+          listRef.current?.scrollToIndex({
+            index: 0,
+            viewPosition: 0,
+            viewOffset: 100,
+          });
+        }
+      }
+    }
+  };
+
   const renderMessageBody = () =>
     ({
       [MsgEnum.TEXT]: <TextMsg isSelf={isSelf} text={(messageBody as TextBody).content} />,
@@ -123,8 +165,19 @@ const ChatCard: FC<IProps> = ({
       [MsgEnum.EMOJI]: <Emoji url={(messageBody as EmojiBody).url} />,
     }[type]);
 
-  const shouldRenderBubble = () => [MsgEnum.TEXT].includes(type);
-  const shouldRenderChildrenPressable = () => [MsgEnum.IMAGE].includes(type);
+  const renderReply = () => {
+    return (
+      messageBody.reply && (
+        <ReplyCard
+          message={messageBody.reply}
+          size="small"
+          onPress={handleScrollToReplyMessage}
+          layoutAnimation={false}
+          style={{ alignSelf: isSelf ? 'flex-end' : 'flex-start' }}
+        />
+      )
+    );
+  };
 
   if (type === MsgEnum.RECALL) {
     return <Recall text={messageBody as unknown as string} />;
@@ -138,6 +191,12 @@ const ChatCard: FC<IProps> = ({
       </View>
       <View style={styles.contentWrapper}>
         <View style={styles.username}>
+          {badgeId && (
+            <Image
+              style={styles.badgeImage}
+              source={{ uri: badges.find((_) => _.id === badgeId)?.img }}
+            />
+          )}
           <Text style={styles.usernameText}>{`${username} (${address || '未知'})`}</Text>
         </View>
         <PopMenu
@@ -152,14 +211,7 @@ const ChatCard: FC<IProps> = ({
         >
           {renderMessageBody()}
         </PopMenu>
-        {messageBody.reply && (
-          <ReplyCard
-            message={messageBody.reply}
-            size="small"
-            layoutAnimation={false}
-            style={{ alignSelf: isSelf ? 'flex-end' : 'flex-start' }}
-          />
-        )}
+        {renderReply()}
       </View>
     </View>
   );

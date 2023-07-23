@@ -45,7 +45,7 @@ const ReplyCard: FC<IProps> = ({
         paddingHorizontal: matchSize(15, 7),
       },
       text: {
-        color: 'white',
+        color: '#999',
         fontSize: matchSize(16, 12),
       },
     });

@@ -186,18 +186,12 @@ export type MsgUserType = {
   /** 用户ID */
   uid: number;
   /** 用户名 */
-  username: string;
+  name: string;
   /** 头像 */
   avatar: string;
   /** 归属地 */
   locPlace: string;
-  /** 徽章 */
-  badge?: {
-    /** 徽章地址 */
-    img: string;
-    /** 描述 */
-    describe: string; // 描述
-  };
+  wearingItemId: number;
 };
 
 /**
