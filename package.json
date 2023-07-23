@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "android": "react-native run-android",
+    "android/build": "cd android & gradlew assembleRelease",
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start"
@@ -16,6 +17,7 @@
     "@react-navigation/native-stack": "^6.9.13",
     "alova": "^2.9.1",
     "axios": "^1.4.0",
+    "dayjs": "^1.11.9",
     "immer": "^10.0.2",
     "lodash": "^4.17.21",
     "react": "18.2.0",

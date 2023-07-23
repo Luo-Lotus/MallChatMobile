@@ -44,7 +44,7 @@ const ChatCard: FC<IProps> = ({
   index,
 }) => {
   const [data, setString] = useClipboard();
-  const { recallMessage, setCurrentReplyingMsgId, inputRef, listRef, fetchMessages } =
+  const { recallMessage, setCurrentReplyingMsgId, inputRef, listRef, fetchMessages, getSendTime } =
     useChatStore();
   const { isLogin, badges } = useUserStore();
 
@@ -78,9 +78,17 @@ const ChatCard: FC<IProps> = ({
     ]);
   }, []);
 
+  const sendTimeStr = useMemo(() => getSendTime(index), [index]);
+
   const styles = useMemo(
     () =>
       StyleSheet.create({
+        sendTimeText: {
+          color: 'gray',
+          textAlign: 'center',
+          fontSize: 12,
+          marginVertical: 10,
+        },
         container: {
           flexDirection: isSelf ? 'row-reverse' : 'row',
           alignItems: 'flex-start',
@@ -184,36 +192,39 @@ const ChatCard: FC<IProps> = ({
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.avatarWrapper}>
-        {/** @ts-ignore */}
-        <Image style={styles.avatarImage} src={avatarUrl} defaultSource={defaultAvatar} />
-      </View>
-      <View style={styles.contentWrapper}>
-        <View style={styles.username}>
-          {badgeId && (
-            <Image
-              style={styles.badgeImage}
-              source={{ uri: badges.find((_) => _.id === badgeId)?.img }}
-            />
-          )}
-          <Text style={styles.usernameText}>{`${username} (${address || '未知'})`}</Text>
+    <>
+      {sendTimeStr && <Text style={styles.sendTimeText}>{sendTimeStr}</Text>}
+      <View style={styles.container}>
+        <View style={styles.avatarWrapper}>
+          {/** @ts-ignore */}
+          <Image style={styles.avatarImage} src={avatarUrl} defaultSource={defaultAvatar} />
         </View>
-        <PopMenu
-          menus={menus}
-          style={{ alignSelf: isSelf ? 'flex-end' : 'flex-start', marginTop: 5 }}
-          pressableProps={{
-            unstable_pressDelay: 100,
-            style: shouldRenderBubble() && styles.messageBubble,
-            isRipple: shouldRenderBubble(),
-          }}
-          isChildrenPressable={shouldRenderChildrenPressable()}
-        >
-          {renderMessageBody()}
-        </PopMenu>
-        {renderReply()}
+        <View style={styles.contentWrapper}>
+          <View style={styles.username}>
+            {badgeId && (
+              <Image
+                style={styles.badgeImage}
+                source={{ uri: badges.find((_) => _.id === badgeId)?.img }}
+              />
+            )}
+            <Text style={styles.usernameText}>{`${username} (${address || '未知'})`}</Text>
+          </View>
+          <PopMenu
+            menus={menus}
+            style={{ alignSelf: isSelf ? 'flex-end' : 'flex-start', marginTop: 5 }}
+            pressableProps={{
+              unstable_pressDelay: 100,
+              style: shouldRenderBubble() && styles.messageBubble,
+              isRipple: shouldRenderBubble(),
+            }}
+            isChildrenPressable={shouldRenderChildrenPressable()}
+          >
+            {renderMessageBody()}
+          </PopMenu>
+          {renderReply()}
+        </View>
       </View>
-    </View>
+    </>
   );
 };
 

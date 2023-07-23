@@ -10,6 +10,7 @@ import { MsgEnum } from '../enums';
 import { RefObject, createRef } from 'react';
 import { FlatList } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
+import dayjs from 'dayjs';
 
 export interface IChatStoreState {
   /** 消息列表 */
@@ -39,6 +40,7 @@ export interface IChatStoreState {
   /** 通过消息列表拿到对应的用户，组合为新数组 */
   combineMessageWithUser: (messages: MessageType[]) => Promise<MessageType[]>;
   findMessagesById: (msgId: number) => MessageType | undefined;
+  getSendTime: (index: number) => string | undefined;
 }
 
 export const useChatStore = create<IChatStoreState>((set, get) => ({
@@ -71,7 +73,7 @@ export const useChatStore = create<IChatStoreState>((set, get) => ({
       get().markRecallMessage,
     );
   },
-  fetchMessages: async (pageSize = 20, roomId = 1) => {
+  fetchMessages: async (pageSize = 50, roomId = 1) => {
     const res = await apis
       .getMsgList({ params: { pageSize, roomId, cursor: get().pageCursor } })
       .send();
@@ -155,5 +157,25 @@ export const useChatStore = create<IChatStoreState>((set, get) => ({
   },
   findMessagesById: (msgId) => {
     return get().messages.find((item) => item.message.id === msgId);
+  },
+  getSendTime: (index: number) => {
+    if (index === 0) {
+      return;
+    }
+    const curMsgTime = get().messages[index].message.sendTime;
+    const lastMsgTime = get().messages[index - 1].message.sendTime;
+
+    if (curMsgTime && curMsgTime - lastMsgTime >= 1000 * 60 * 10) {
+      try {
+        return dayjs(curMsgTime).calendar(dayjs(), {
+          sameDay: 'HH:mm', // The same day ( Today at 2:30 AM )
+          nextDay: '[明天] HH:mm', // The next day ( Tomorrow at 2:30 AM )
+          nextWeek: '[下周]dd HH:mm', // The next week ( Sunday at 2:30 AM )
+          lastDay: '[昨天] HH:mm', // The day before ( Yesterday at 2:30 AM )
+          lastWeek: '[上周]dd HH:mm ', // Last week ( Last Monday at 2:30 AM )
+          sameElse: 'YYYY/MM/DD/ HH:mm', // Everything else ( 7/10/2011 )
+        });
+      } catch (e) {}
+    }
   },
 }));
